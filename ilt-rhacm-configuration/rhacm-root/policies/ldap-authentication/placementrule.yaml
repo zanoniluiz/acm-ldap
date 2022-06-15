@@ -1,0 +1,18 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: ldap-authentication
+  namespace: acm-policies
+spec:
+  clusterSelector:
+    matchExpressions:
+    - key: vendor
+      operator: In
+      values:
+      - OpenShift
+    - key: purpose
+      operator: In
+      values:
+      - development
+      - production

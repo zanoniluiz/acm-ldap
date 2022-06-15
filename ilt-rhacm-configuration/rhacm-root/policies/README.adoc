@@ -1,0 +1,9 @@
+This folder holds common policies to be deployed. Policies always
+go onto the hub cluster - and use Placement Rules and Placement Bindings to select which
+cluster they apply to.
+
+Each policy should go into its own directory.
+
+Policies should be deployed into the `acm-policies` namespace - unless they distribute
+secrets to other clusters, then they go into the `acm-secrets` namespace.
+

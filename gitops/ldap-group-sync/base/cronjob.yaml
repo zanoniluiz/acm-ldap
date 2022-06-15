@@ -1,0 +1,53 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ldap-group-sync
+  namespace: ldap-group-sync
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          activeDeadlineSeconds: 30
+          containers:
+          - command:
+            - /bin/bash
+            - -c
+            - oc adm groups sync --confirm --sync-config=/ldap-sync/config/ldap-group-sync.yaml
+              $([ -s /ldap-sync/whitelist/whitelist.txt ] && echo --whitelist=/ldap-sync/whitelist/whitelist.txt)
+            image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+            name: cronjob-ldap-group-sync
+            volumeMounts:
+            - name: ldap-sync-config
+              mountPath: /ldap-sync/config
+            - name: ldap-sync-whitelist
+              mountPath: /ldap-sync/whitelist
+            - name: ldap-sync-ca
+              mountPath: /ldap-sync/ca
+            - name: ldap-bind-password
+              mountPath: /ldap-sync/secrets
+          dnsPolicy: ClusterFirst
+          restartPolicy: Never
+          serviceAccount: ldap-group-syncer
+          serviceAccountName: ldap-group-syncer
+          terminationGracePeriodSeconds: 30
+          volumes:
+          - name: ldap-sync-config
+            configMap:
+              name: ldap-sync-config
+          - name: ldap-sync-whitelist
+            configMap:
+              name: ldap-sync-whitelist
+          - name: ldap-sync-ca
+            configMap:
+              name: idm-tls-ca
+          - name: ldap-bind-password
+            secret:
+              secretName: ldap-bind-password
+  schedule: '*/15 * * * *'
+  startingDeadlineSeconds: 60
+  successfulJobsHistoryLimit: 2

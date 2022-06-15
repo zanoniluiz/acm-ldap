@@ -1,0 +1,13 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: acm-configuration
+  namespace: acm-configuration
+  annotations:
+    apps.open-cluster-management.io/reconcile-rate: high
+spec:
+  pathname: http://gitea-gitea.apps.ocphub.zmlabs.site/zmaciel/ilt-rhacm-configuration
+  type: Git
+  secretRef:
+    name: gitea

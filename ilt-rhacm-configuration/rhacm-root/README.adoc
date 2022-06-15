@@ -1,0 +1,36 @@
+This folder holds the root configuration for the cluster. Everything in this folder goes on the hub cluster.
+
+This includes:
+- Policies
+- Application Subscriptions
+
+Application Subscriptions can go on just one cluster (e.g. the hub cluster). Then all YAML resources
+can be in the application directory.
+
+Or application subscriptions can go onto multiple clusters. If multiple clusters get the same subscription
+use the label as the subdirectory. For cluster-specific application subscriptions use the cluster
+name as the subdirectory.
+
+Deploying this folder as an application to the hub cluster will cascade all other settings.
+
+Directory Structure:
+
+.
+├── policies
+│   ├── policy-1
+│   ├── policy-2
+│   └── ...
+└── subscriptions
+    ├── application-subscription-1
+    ├── application-subscription-2
+    │   ├── development
+    │   └── production
+    ├── application-subscription-3
+    │   ├── <cluster-name-1>
+    │   ├── <cluster-name-2>
+    │   └── ...
+    └── application-subscription-4
+        ├── <cluster-name-1>
+        ├── <cluster-name-2>
+        └── ...
+

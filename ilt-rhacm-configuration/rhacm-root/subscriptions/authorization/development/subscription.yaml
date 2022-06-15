@@ -1,0 +1,18 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: authorization-development
+  namespace: acm-subscriptions
+  annotations:
+    apps.open-cluster-management.io/git-branch: master
+    apps.open-cluster-management.io/git-path: managed/authorization/overlays/development
+    apps.open-cluster-management.io/reconcile-option: merge
+  labels:
+    app: authorization-development
+spec:
+  channel: acm-configuration/acm-applications
+  placement:
+    placementRef:
+      name: authorization-development
+      kind: PlacementRule

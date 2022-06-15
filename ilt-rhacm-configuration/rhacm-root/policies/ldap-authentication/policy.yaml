@@ -1,0 +1,79 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: ldap-authentication
+  namespace: acm-policies
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: ldap-authentication
+      spec:
+        remediationAction: enforce
+        severity: med
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
+              name: idm-tls-ca
+              namespace: openshift-config
+            data:
+              ca.crt: |
+                -----BEGIN CERTIFICATE-----
+                MIIEizCCAvOgAwIBAgIBATANBgkqhkiG9w0BAQsFADA2MRQwEgYDVQQKDAtaTUxB
+                QlMuU0lURTEeMBwGA1UEAwwVQ2VydGlmaWNhdGUgQXV0aG9yaXR5MB4XDTIyMDYw
+                MTE1MzQzMloXDTQyMDYwMTE1MzQzMlowNjEUMBIGA1UECgwLWk1MQUJTLlNJVEUx
+                HjAcBgNVBAMMFUNlcnRpZmljYXRlIEF1dGhvcml0eTCCAaIwDQYJKoZIhvcNAQEB
+                BQADggGPADCCAYoCggGBANIZTJzbiwVf0fLlZzxcd1dkh0RTSjz9RtLXo8QOsBMx
+                XspC58RuFD45HWfWAX/6rgJCTTPIOLI5dmxuydTT5EAd/YHIn92+SVtVhcOa+B8o
+                Dpc+lxskkAblnvmA7w6bYrFvFKUex9HC8CgHBwB7+GpL8FOGJSOlkkSh8G/nqw1f
+                yeswefgs0KXx1cNXsxuD4Ub3BP16BR+LzIxu/VlRbJX9VdgYsTuQ14XtwLK4ljt8
+                1sIEzE6MOcKzthE0cBAF9/aiVizgJrBcMxntWRa1Zya2+YXwMtR2EIElaCmjB6j5
+                Kx9Wz4dkpVgjep8BFTtbFH0YVtLmuyVCD2vtrBGGENuX8NWult74+kZCyn7QqtQw
+                3sYouJzWYdqn9TxLgfTR2BqcUGEX75FbkUDNfFuhS4Z39dXJBTNv1JKpmhYS094u
+                toIT31RyjsRcWfBE69TocJAxd96uQ4hnP1gat/uZyGcNejqUWcUSb1Rs4LDGVFjE
+                Xz1FwhYSHFogNCoGOpuYhwIDAQABo4GjMIGgMB8GA1UdIwQYMBaAFBaaExiCXCIR
+                gycOiIFehKvQ54+8MA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgHGMB0G
+                A1UdDgQWBBQWmhMYglwiEYMnDoiBXoSr0OePvDA9BggrBgEFBQcBAQQxMC8wLQYI
+                KwYBBQUHMAGGIWh0dHA6Ly9pcGEtY2Euem1sYWJzLnNpdGUvY2Evb2NzcDANBgkq
+                hkiG9w0BAQsFAAOCAYEAryhSNfm/5P2PhRC0A5McJRe5jhcHawq30WlozHG8BD7s
+                1Ay4Pkdh+aTzwx8SFkSAlwsxgEDxq795VX40CAp122UKMqjK9q9gUgmFnS3qiYv6
+                3CtteiGKO2WyT4N4XE+dRzsrNL/lUwn2FCUJZexmW8Uqq9jb04fgFqyiSddYojPO
+                kqw8H3IHQAgVOuwE1KxVphdDW4DsVX1BC9fdyNc3KWTxOnPNMMcoRLxY/XL0SYns
+                OHM6Fq0xsZtZ5nJw273iRkwlr1KMOLzaQmmRAr9S/ltk+KUEnr3V7q6JATFD4i2r
+                lSg/jY/fTDfL22IfSLKwretocU74mYQZGc5Hxvrq3BShCzEUdP/Tno/s9IPhChHE
+                xyQenFqUfc+k33uY0o4c/PlSmFcHijawayibNKmFoFieXRexwoOwHHr55FGi/rcn
+                ny2hf2fIMtwmMcb3d7qFbwKxrwvM3yRJQl//A1aZCwRmMuNrTfayhXPK2NFoIlSz
+                xCtGDE7ZeJqto+57u3+Q
+                -----END CERTIFICATE-----
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: config.openshift.io/v1
+            kind: OAuth
+            metadata:
+              name: cluster
+            spec:
+              identityProviders:
+              - name: LDAP
+                mappingMethod: claim
+                type: LDAP
+                ldap:
+                  attributes:
+                    email: ["mail"]
+                    id: ["dn"]
+                    name: ["cn"]
+                    preferredUsername: ["uid"]
+                  bindDN: 'uid=admin,cn=users,cn=accounts,dc=zmlabs,dc=site'
+                  bindPassword:
+                    name: ldap-bind-password
+                  insecure: false
+                  ca:
+                    name: idm-tls-ca
+                  url: 'ldaps://idm.zmlabs.site:636/cn=users,cn=accounts,dc=zmlabs,dc=site?uid'

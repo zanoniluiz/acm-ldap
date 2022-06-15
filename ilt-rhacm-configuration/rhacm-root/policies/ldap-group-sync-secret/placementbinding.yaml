@@ -1,0 +1,14 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: ldap-bind-password-group-sync
+  namespace: acm-secrets
+placementRef:
+  name: ldap-bind-password-group-sync
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: ldap-bind-password-group-sync
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io

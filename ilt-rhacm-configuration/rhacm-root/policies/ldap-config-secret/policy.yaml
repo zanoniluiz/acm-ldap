@@ -1,0 +1,29 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: ldap-bind-password-config
+  namespace: acm-secrets
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: ldap-bind-password-config
+      spec:
+        remediationAction: enforce
+        severity: med
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: ldap-bind-password
+              namespace: openshift-config
+            stringData:
+              bindPassword: |
+                {{hub fromConfigMap "acm-secrets" "ldap-secrets" "ldap-bind-password" hub}}

@@ -1,0 +1,35 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: ldap-bind-password-group-sync
+  namespace: acm-secrets
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: ldap-bind-password-group-sync
+      spec:
+        remediationAction: enforce
+        severity: med
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: ldap-group-sync
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: ldap-bind-password
+              namespace: ldap-group-sync
+            stringData:
+              bindPassword: |
+                {{hub fromConfigMap "acm-secrets" "ldap-secrets" "ldap-bind-password" hub}}

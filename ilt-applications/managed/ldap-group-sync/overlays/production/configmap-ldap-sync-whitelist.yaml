@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ldap-sync-whitelist
+  namespace: ldap-group-sync
+data:
+  whitelist.txt: |
+    cn=ocp-admin,cn=groups,cn=accounts,dc=zmlabs,dc=site
+    cn=ocp-prod-edit,cn=groups,cn=accounts,dc=zmlabs,dc=site
+    cn=ocp-prod-view,cn=groups,cn=accounts,dc=zmlabs,dc=site
+    cn=ocp-reader,cn=groups,cn=accounts,dc=zmlabs,dc=site

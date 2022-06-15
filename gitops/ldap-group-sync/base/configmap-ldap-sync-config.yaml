@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ldap-sync-config
+  namespace: ldap-group-sync
+data:
+  ldap-group-sync.yaml: |
+    kind: "LDAPSyncConfig"
+    apiVersion: "v1"
+    url: "ldaps://idm.zmlabs.site"
+    insecure: false
+    bindDN: "uid=admin,cn=users,cn=accounts,dc=zmlabs,dc=site"
+    bindPassword:
+      file: "/ldap-sync/secrets/bindPassword"
+    ca: "/ldap-sync/ca/ca.crt"
+    rfc2307:
+      groupsQuery:
+        baseDN: "cn=groups,cn=accounts,dc=zmlabs,dc=site"
+        scope: "sub"
+        derefAliases: "never"
+        filter: "(objectClass=groupofnames)"
+        pageSize: 0
+      groupUIDAttribute: "dn"
+      groupNameAttributes: ["cn"]
+      groupMembershipAttributes: ["member"]
+      usersQuery:
+        baseDN: "cn=users,cn=accounts,dc=zmlabs,dc=site"
+        scope: "sub"
+        derefAliases: "never"
+        pageSize: 0
+      userNameAttributes: ["uid"]
+      userUIDAttribute: "dn"
+      tolerateMemberNotFoundErrors: true
+      tolerateMemberOutOfScopeErrors: true
